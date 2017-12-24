@@ -16,6 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:fitsSystemWindows="true"
+            app:titleTextColor="@android:color/white"
             app:layout_scrollFlags="scroll">
         </android.support.v7.widget.Toolbar>
 
@@ -68,9 +69,12 @@
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fillViewport="true"
         app:layout_behavior="android.support.design.widget.AppBarLayout$ScrollingViewBehavior">
-
-
+        <ListView
+            android:id="@+id/trophyListView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
     </android.support.v4.widget.NestedScrollView>
 
 </android.support.design.widget.CoordinatorLayout>
