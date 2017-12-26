@@ -18,13 +18,17 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key"/>
 
-        <activity android:name=".TrophyActivity"
+        <activity
+            android:name=".TrophyActivity"
             android:theme="@style/AppThemeNoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        </activity>
+        <activity android:name=".TrophyDetailsActivity"
+                  android:theme="@style/AppThemeNoActionBar">
         </activity>
     </application>
 

@@ -43,6 +43,7 @@ public class TrophyListAdpapter extends ArrayAdapter<Trophy> {
         Trophy trophy = trophies.get(position);
         trophyObjectiveTextView.setText(trophy.getObjective());
 
+        v.setTag(trophy);
         return v;
     }
 }

@@ -24,7 +24,7 @@ class DBHelper extends SQLiteOpenHelper {
 
     private Context mContext;
     static final String DATABASE_NAME = "Walkie";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     private static final String TROPHY_DATABASE_TABLE = "Trophies";
 
@@ -35,7 +35,7 @@ class DBHelper extends SQLiteOpenHelper {
     private static final String FIELD_TROPHY_SCHOOL = "school";
     private static final String FIELD_TROPHY_LOCATION_TITLE = "location_title";
     private static final String FIELD_TROPHY_LATITUDE = "latitude";
-    private static final String FIELD_TROPHY_LONGTITUDE = "longtitude";
+    private static final String FIELD_TROPHY_LONGITUDE = "longitude";
     private static final String FIELD_TROPHY_DONE = "done";
 
     public DBHelper(Context context) {
@@ -52,7 +52,7 @@ class DBHelper extends SQLiteOpenHelper {
                 + FIELD_TROPHY_SCHOOL +" TEXT, "
                 + FIELD_TROPHY_LOCATION_TITLE+ " TEXT, "
                 + FIELD_TROPHY_LATITUDE + " FLOAT, "
-                + FIELD_TROPHY_LONGTITUDE + " FLOAT, "
+                + FIELD_TROPHY_LONGITUDE + " FLOAT, "
                 + FIELD_TROPHY_DONE +" INTEGER"
                 + ")"
         );
@@ -76,7 +76,7 @@ class DBHelper extends SQLiteOpenHelper {
         values.put(FIELD_TROPHY_SCHOOL, school);
         values.put(FIELD_TROPHY_LOCATION_TITLE, locationTitle);
         values.put(FIELD_TROPHY_LATITUDE, latitude);
-        values.put(FIELD_TROPHY_LONGTITUDE, longtitude);
+        values.put(FIELD_TROPHY_LONGITUDE, longtitude);
         values.put(FIELD_TROPHY_DONE, done);
         db.insert(TROPHY_DATABASE_TABLE, null,values);
 
@@ -89,7 +89,7 @@ class DBHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.query(TROPHY_DATABASE_TABLE, new String[]{FIELD_TROPHY_NUMBER, FIELD_TROPHY_OBJECTIVE, FIELD_TROPHY_DESCRIPTION,
-        FIELD_TROPHY_SCHOOL, FIELD_TROPHY_LOCATION_TITLE, FIELD_TROPHY_LATITUDE, FIELD_TROPHY_LONGTITUDE, FIELD_TROPHY_DONE},
+        FIELD_TROPHY_SCHOOL, FIELD_TROPHY_LOCATION_TITLE, FIELD_TROPHY_LATITUDE, FIELD_TROPHY_LONGITUDE, FIELD_TROPHY_DONE},
                 null,null,null,null,null);
 
         if (cursor.moveToFirst()) {
@@ -127,7 +127,7 @@ class DBHelper extends SQLiteOpenHelper {
         String line;
         try {
             while ((line = buffer.readLine()) != null) {
-                String[] fields = line.split(",");
+                String[] fields = line.split("\\|");
                 if (fields.length != 8) {
                     Log.d("Walkie", "Skipping Bad CSV Row: " + Arrays.toString(fields));
                     continue;
@@ -139,7 +139,7 @@ class DBHelper extends SQLiteOpenHelper {
                 String locationTitle = fields[4].trim();
                 double latitude = Double.parseDouble(fields[5].trim());
                 double longtitude = Double.parseDouble(fields[6].trim());
-                boolean done = (Integer.parseInt(fields[6].trim()) == 1);
+                boolean done = Boolean.parseBoolean(fields[7].trim());
                 addTrophy(id,objective,description,school,locationTitle,latitude,longtitude,done);
             }
         } catch (IOException e) {

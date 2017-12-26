@@ -1,7 +1,9 @@
 package com.phuchuynh.projects.walkie;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.Toolbar;
 
@@ -37,6 +39,12 @@ public class TrophyActivity extends AppCompatActivity {
         trophyListView.setAdapter(mTrophyListAdpapter);
     }
 
+    public void seeTrophyDetails(View v)
+    {
+        Intent detailsIntent = new Intent(this, TrophyDetailsActivity.class);
+        detailsIntent.putExtra("Trophy", (Trophy)v.getTag());
+        startActivity(detailsIntent);
+    }
     private void populateTrophiesDatabase()
     {
         mDBHelper.deleteAllTrophies();
