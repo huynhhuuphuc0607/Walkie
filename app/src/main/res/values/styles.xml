@@ -15,4 +15,11 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+
+    <style name="ExpandedAppBarWhiteTitle" parent="@android:style/TextAppearance.DeviceDefault.Large">
+        <item name="android:textColor">#ffffff</item>
+    </style>
+    <style name="CollapsedAppBarWhiteTitle" parent="@android:style/TextAppearance.DeviceDefault.Medium">
+        <item name="android:textColor">#ffffff</item>
+    </style>
 </resources>

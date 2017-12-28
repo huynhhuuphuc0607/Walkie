@@ -127,7 +127,7 @@ class DBHelper extends SQLiteOpenHelper {
         String line;
         try {
             while ((line = buffer.readLine()) != null) {
-                String[] fields = line.split("\\|");
+                String[] fields = line.split("(?<!\\\\),");
                 if (fields.length != 8) {
                     Log.d("Walkie", "Skipping Bad CSV Row: " + Arrays.toString(fields));
                     continue;
@@ -138,9 +138,9 @@ class DBHelper extends SQLiteOpenHelper {
                 String school = fields[3].trim();
                 String locationTitle = fields[4].trim();
                 double latitude = Double.parseDouble(fields[5].trim());
-                double longtitude = Double.parseDouble(fields[6].trim());
+                double longitude = Double.parseDouble(fields[6].trim());
                 boolean done = Boolean.parseBoolean(fields[7].trim());
-                addTrophy(id,objective,description,school,locationTitle,latitude,longtitude,done);
+                addTrophy(id,objective,description,school,locationTitle,latitude,longitude,done);
             }
         } catch (IOException e) {
             e.printStackTrace();
