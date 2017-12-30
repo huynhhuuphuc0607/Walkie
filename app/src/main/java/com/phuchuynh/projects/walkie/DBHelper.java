@@ -24,9 +24,10 @@ class DBHelper extends SQLiteOpenHelper {
 
     private Context mContext;
     static final String DATABASE_NAME = "Walkie";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     private static final String TROPHY_DATABASE_TABLE = "Trophies";
+    private static final String SCHOOL_DATABASE_TABLE = "Schools";
 
     //Trophies
     private static final String FIELD_TROPHY_NUMBER = "trophy_number";
@@ -37,6 +38,17 @@ class DBHelper extends SQLiteOpenHelper {
     private static final String FIELD_TROPHY_LATITUDE = "latitude";
     private static final String FIELD_TROPHY_LONGITUDE = "longitude";
     private static final String FIELD_TROPHY_DONE = "done";
+
+
+    //Schools
+    private static final String FIELD_SCHOOL_NUMBER = "school_number";
+    private static final String FIELD_SCHOOL_NAME = "objective";
+    private static final String FIELD_SCHOOL_DESCRIPTION = "description";
+    private static final String FIELD_SCHOOL_STATE= "state";
+    private static final String FIELD_SCHOOL_TYPE = "type";
+    private static final String FIELD_SCHOOL_LATITUDE = "latitude";
+    private static final String FIELD_SCHOOL_LONGITUDE = "longitude";
+    private static final String FIELD_SCHOOL_IMAGE_NAME = "image_name";
 
     public DBHelper(Context context) {
         super(context, DATABASE_NAME,null, DATABASE_VERSION);
@@ -56,16 +68,31 @@ class DBHelper extends SQLiteOpenHelper {
                 + FIELD_TROPHY_DONE +" INTEGER"
                 + ")"
         );
+
+        db.execSQL("CREATE TABLE " + SCHOOL_DATABASE_TABLE + "("
+                + FIELD_SCHOOL_NUMBER + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + FIELD_SCHOOL_NAME +" TEXT, "
+                + FIELD_SCHOOL_DESCRIPTION +" TEXT, "
+                + FIELD_SCHOOL_STATE +" TEXT, "
+                + FIELD_SCHOOL_TYPE +" INTEGER, "
+                + FIELD_SCHOOL_LATITUDE+ " FLOAT, "
+                + FIELD_SCHOOL_LONGITUDE + " FLOAT, "
+                + FIELD_SCHOOL_IMAGE_NAME + " TEXT"
+                + ")"
+        );
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
         db.execSQL("DROP TABLE IF EXISTS "+ TROPHY_DATABASE_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS "+ SCHOOL_DATABASE_TABLE);
         onCreate(db);
     }
 
+
+    //--------------------------Trophies--STARTS--HERE-------------------------------
     public void addTrophy(long id, String objective, String description, String school, String locationTitle,
-                          double latitude, double longtitude, boolean done)
+                          double latitude, double longitude, boolean done)
     {
         SQLiteDatabase db = getWritableDatabase();
 
@@ -76,7 +103,7 @@ class DBHelper extends SQLiteOpenHelper {
         values.put(FIELD_TROPHY_SCHOOL, school);
         values.put(FIELD_TROPHY_LOCATION_TITLE, locationTitle);
         values.put(FIELD_TROPHY_LATITUDE, latitude);
-        values.put(FIELD_TROPHY_LONGITUDE, longtitude);
+        values.put(FIELD_TROPHY_LONGITUDE, longitude);
         values.put(FIELD_TROPHY_DONE, done);
         db.insert(TROPHY_DATABASE_TABLE, null,values);
 
@@ -106,13 +133,14 @@ class DBHelper extends SQLiteOpenHelper {
 
         return trophies;
     }
+
     public void deleteAllTrophies()
     {
         SQLiteDatabase db = getWritableDatabase();
         db.delete(TROPHY_DATABASE_TABLE, null,null);
         db.close();
     }
-    //--------------------------Trophies--STARTS--HERE-------------------------------
+
     public boolean importTrophiesFromCSV(String csvFileName) {
         AssetManager manager = mContext.getAssets();
         InputStream inStream;
@@ -149,4 +177,119 @@ class DBHelper extends SQLiteOpenHelper {
         return true;
     }
     //-----------------------------Trophies--ENDs--HERE------------------------------
+
+
+    //-----------------------------Schools--STARTS--HERE------------------------------
+
+    public void addSchool(long id, String name, String description, String state, int type, double latitude,
+                          double longitude, String imageName)
+    {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(FIELD_SCHOOL_NUMBER, id);
+        values.put(FIELD_SCHOOL_NAME, name);
+        values.put(FIELD_SCHOOL_DESCRIPTION, description);
+        values.put(FIELD_SCHOOL_STATE, state);
+        values.put(FIELD_SCHOOL_TYPE, type);
+        values.put(FIELD_SCHOOL_LATITUDE, latitude);
+        values.put(FIELD_SCHOOL_LONGITUDE, longitude);
+        values.put(FIELD_SCHOOL_IMAGE_NAME, imageName);
+
+        db.insert(SCHOOL_DATABASE_TABLE, null,values);
+
+        db.close();
+    }
+
+    public List<School> getAllSchools()
+    {
+        List<School> schools = new ArrayList<>();
+
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(SCHOOL_DATABASE_TABLE, new String[]{FIELD_SCHOOL_NUMBER, FIELD_SCHOOL_NAME, FIELD_SCHOOL_DESCRIPTION,
+                        FIELD_SCHOOL_STATE, FIELD_SCHOOL_TYPE, FIELD_SCHOOL_LATITUDE, FIELD_SCHOOL_LONGITUDE, FIELD_SCHOOL_IMAGE_NAME},
+                null,null,null,null,null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                School school = new School(cursor.getLong(0), cursor.getString(1), cursor.getString(2),
+                        cursor.getString(3), cursor.getInt(4), cursor.getDouble(5), cursor.getDouble(6),
+                        cursor.getString(7));
+                schools.add(school);
+            } while (cursor.moveToNext());
+        }
+
+        db.close();
+        cursor.close();
+
+        return schools;
+    }
+
+    public ArrayList<School> getSchools(int type)
+    {
+        ArrayList<School> schools = new ArrayList<>();
+
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(SCHOOL_DATABASE_TABLE, new String[]{FIELD_SCHOOL_NUMBER, FIELD_SCHOOL_NAME, FIELD_SCHOOL_DESCRIPTION,
+                        FIELD_SCHOOL_STATE, FIELD_SCHOOL_TYPE, FIELD_SCHOOL_LATITUDE, FIELD_SCHOOL_LONGITUDE, FIELD_SCHOOL_IMAGE_NAME},
+                FIELD_SCHOOL_TYPE + " = ?",new String[]{type +""},null,null,null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                School school = new School(cursor.getLong(0), cursor.getString(1), cursor.getString(2),
+                        cursor.getString(3), cursor.getInt(4), cursor.getDouble(5), cursor.getDouble(6),
+                        cursor.getString(7));
+                schools.add(school);
+            } while (cursor.moveToNext());
+        }
+
+        db.close();
+        cursor.close();
+
+        return schools;
+    }
+
+    public void deleteAllSchools()
+    {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete(SCHOOL_DATABASE_TABLE, null,null);
+        db.close();
+    }
+    public boolean importSchoolsFromCSV(String csvFileName) {
+        AssetManager manager = mContext.getAssets();
+        InputStream inStream;
+        try {
+            inStream = manager.open(csvFileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        BufferedReader buffer = new BufferedReader(new InputStreamReader(inStream));
+        String line;
+        try {
+            while ((line = buffer.readLine()) != null) {
+                String[] fields = line.split("(?<!\\\\),");
+                if (fields.length != 8) {
+                    Log.d("Walkie", "Skipping Bad CSV Row: " + Arrays.toString(fields));
+                    continue;
+                }
+
+                long id = Long.parseLong(fields[0].trim());
+                String name = fields[1].trim();
+                String description = fields[2].trim();
+                String state = fields[3].trim();
+                int type = Integer.parseInt(fields[4].trim());
+                double latitude = Double.parseDouble(fields[5].trim());
+                double longitude = Double.parseDouble(fields[6].trim());
+                String imageName = fields[7].trim();
+                addSchool(id,name,description,state,type,latitude,longitude,imageName);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+    //-----------------------------Schools--ENDS--HERE------------------------------
 }
