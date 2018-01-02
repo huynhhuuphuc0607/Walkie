@@ -3,6 +3,8 @@ package com.phuchuynh.projects.walkie;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.android.gms.maps.model.LatLng;
+
 /**
  * Created by HuynhHuu on 30-Dec-17.
  */
@@ -103,6 +105,10 @@ public class School implements Parcelable {
         this.longitude = longitude;
     }
 
+    public LatLng getLatLng()
+    {
+        return new LatLng(latitude,longitude);
+    }
     public String getImageName() {
         return imageName;
     }

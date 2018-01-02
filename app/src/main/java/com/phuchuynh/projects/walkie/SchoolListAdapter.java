@@ -2,6 +2,8 @@ package com.phuchuynh.projects.walkie;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.AssetManager;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -11,6 +13,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +45,15 @@ public class SchoolListAdapter extends ArrayAdapter {
 
         School school = schools.get(position);
         schoolNameTextView.setText(school.getName().replaceAll("\\\\\\\\,",","));
+
+        AssetManager am = mContext.getAssets();
+        try {
+            InputStream is = am.open(school.getImageName());
+            Drawable drawable = Drawable.createFromStream(is,school.getName());
+            schoolImageView.setImageDrawable(drawable);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         v.setTag(school);
         return v;
